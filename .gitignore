@@ -42,36 +42,3 @@ next-env.d.ts
 # prisma
 prisma/*.db
 prisma/*.db-journal
-
-# skill-kit installations (various IDE integrations)
-.agent/
-.agents/
-.cline/
-.codebuddy/
-.commandcode/
-.continue/
-.crush/
-.cursor/
-.factory/
-.goose/
-.junie/
-.kilocode/
-.kiro/
-.kode/
-.mcpjam/
-.mux/
-.neovate/
-.openhands/
-.pi/
-.pochi/
-.qoder/
-.qwen/
-.roo/
-.trae/
-.windsurf/
-.zencoder/
-skills/
-
-# keep .claude for project instructions
-!.claude/
-.claude/skills/
