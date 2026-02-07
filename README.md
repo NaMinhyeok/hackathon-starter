@@ -33,24 +33,25 @@ If you're building your own repo from scratch, just submit to Discord when you'r
 
 ## Judging Criteria
 
-1. **Is the URL accessible?** — it needs to be deployed
-2. **Creativity** — what kind of agent did you build, how fun is it
-3. **Community vote** — participants vote for their favorites
-4. **Bonus** — extra points for using Moru sandboxes!
+1. **Community vote** — participants vote directly. Each person gets 5 votes. Each vote is worth 1 point.
+2. **Organizer vote (5 teams)** — organizers vote for a total of 5 teams. Each organizer vote is worth 5 points.
+3. **URL accessibility** — teams that complete web deployment get 10 bonus points.
 
 ## Prerequisites (for this starter repo)
 
 Please have these ready before the hackathon starts:
 
-1. **Moru API key** — [Moru](https://github.com/moru-ai/moru) is a sandbox for running Claude Agent SDK on the cloud. Each agent runs in its own isolated environment. Get your API key at [moru.io/dashboard](https://moru.io/dashboard?tab=keys).
+1. **Moru API key** — [Moru](https://github.com/moru-ai/moru) is a sandbox for running Claude Agent SDK on the cloud. Each agent runs in its own isolated environment. Get your API key at [moru.io/dashboard](https://moru.io/dashboard?tab=keys). It's free!
 
 > To deploy Claude Agent SDK to the web, you need some form of sandboxing — whether it's Moru or another provider. See the [hosting docs](https://platform.claude.com/docs/en/agent-sdk/hosting) and [secure deployment docs](https://platform.claude.com/docs/en/agent-sdk/secure-deployment) for all options.
 
-2. **Anthropic API key** — create one at [platform.claude.com](https://platform.claude.com/) if you don't already have one. You can also use your local Claude's `.credentials.json` (ask Claude Code "find my credentials.json" and it'll locate it for you), but an API key is recommended for security. Note: API key costs are on you. If you get stuck, ask Claude Code, ChatGPT, or any coding agent to walk you through it.
+2. **Anthropic API key** — create one at [platform.claude.com](https://platform.claude.com/) if you don't already have one. You can also use your local Claude's `.credentials.json` (ask Claude Code "find my credentials.json" and it'll locate it for you), but an API key is recommended for security. Note: API key costs are on you.
 
 3. **Vercel account** — sign up at [vercel.com](https://vercel.com) for deployment. The free plan is more than enough.
 
-4. **PostgreSQL database** — create a free account on [Neon](https://neon.tech) or [Supabase](https://supabase.com). Both have generous free tiers, no credit card needed. If you're not sure how to set up an account, just ask ChatGPT or Claude to walk you through it step by step.
+4. **PostgreSQL database** — create a free account on [Neon](https://neon.tech) or [Supabase](https://supabase.com). Both have generous free tiers, no credit card needed.
+
+Vercel, Neon, and Supabase are all mature services with great documentation. If you need help setting them up, just ask ChatGPT or Claude and they'll walk you through it step by step!
 
 ## Deploy (Vercel) — do this first!
 
@@ -160,6 +161,12 @@ pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+
+## References
+- [Claude Agent SDK Docs](https://platform.claude.com/docs/en/agent-sdk/overview)
+
+- [Moru Docs](https://moru.io/docs)
 
 ---
 
