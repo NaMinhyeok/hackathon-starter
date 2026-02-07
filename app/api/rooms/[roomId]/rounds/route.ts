@@ -83,12 +83,16 @@ export async function POST(
       orderBy: { roundNumber: "desc" },
     });
 
-    // Create round
+    // Determine sessionId: reuse from last completed round (agent resumes it)
+    const resumeSessionId = lastCompletedRound?.sessionId || undefined;
+
+    // Create round — store sessionId upfront so the state API can read messages during build
     const round = await prisma.round.create({
       data: {
         roomId,
         roundNumber,
         suggestionId: topSuggestion.id,
+        sessionId: resumeSessionId || null,
       },
     });
 
@@ -107,7 +111,7 @@ export async function POST(
       room.volumeId,
       callbackUrl,
       prompt,
-      lastCompletedRound?.sessionId || undefined
+      resumeSessionId
     );
 
     // Update round with sandboxId

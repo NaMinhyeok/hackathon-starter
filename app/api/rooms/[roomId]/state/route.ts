@@ -42,9 +42,7 @@ export async function GET(
     // Read build messages if there's an active round with a session
     let messages: SessionEntry[] = [];
     if (currentRound && room.volumeId) {
-      // Try to read session from current round, or from any round that has a sessionId
-      const sessionId = currentRound.sessionId ||
-        room.rounds.find((r) => r.sessionId)?.sessionId;
+      const sessionId = currentRound.sessionId;
 
       if (sessionId) {
         try {
