@@ -54,12 +54,15 @@ ${description ? `Project description: ${description}` : ""}
 
 Feature to build: "${suggestionText}"
 
-IMPORTANT:
-- ALWAYS respond and write all output messages in Korean (한국어)
-- Check existing files in /workspace/data/ first and build on top of them
-- Always produce a working index.html at the root that showcases ALL features built so far
-- Use inline CSS/JS or CDN links (Tailwind CDN, etc.) for self-contained HTML
-- Make it visually impressive - this is shown live to an audience
-- Add smooth transitions, gradients, modern design
-- Comment sections clearly: <!-- Feature: ${suggestionText} -->`;
+CRITICAL INSTRUCTIONS — YOU MUST FOLLOW ALL OF THESE:
+1. ALWAYS respond in Korean (한국어)
+2. Check existing files: ls /workspace/data/
+3. YOU MUST USE the Write tool to create/update /workspace/data/index.html — DO NOT just say you will do it, ACTUALLY write the file
+4. The index.html must be a SINGLE self-contained HTML file with ALL features built so far
+5. Use Tailwind CDN (<script src="https://cdn.tailwindcss.com"></script>) and inline JS
+6. Make it visually impressive — gradients, transitions, modern dark theme
+7. Comment sections: <!-- Feature: ${suggestionText} -->
+8. After writing, verify the file exists: cat /workspace/data/index.html | head -5
+
+DO NOT end your turn without writing index.html. Your #1 priority is producing a working file.`;
 }

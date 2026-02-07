@@ -251,71 +251,95 @@ async function main() {
       resumeSessionId: sessionIdToResume,
     });
 
-    // Run the agent
-    for await (const message of query({
-      prompt,
-      options: {
-        allowedTools: [
-          "Read", "Write", "Edit", "Bash", "Grep", "Glob",
-          "WebSearch", "WebFetch", "TodoWrite", "Task",
-        ],
-        maxTurns: 50,
-        permissionMode: "bypassPermissions",
-        allowDangerouslySkipPermissions: true, // Required when using bypassPermissions
-        cwd: workspace,
-        resume: sessionIdToResume,
-        settingSources: ["user", "project"], // Load ~/.claude/CLAUDE.md, skills, and project settings
-      },
-    })) {
-      // Debug: Log each message type from query
-      debug("Query message", { type: message.type, subtype: (message as any).subtype });
+    // Record index.html mtime before query so we can detect if it was written/updated
+    const indexPath = path.join(workspace, "index.html");
+    function getIndexMtime(): number {
+      try { return fs.statSync(indexPath).mtimeMs; } catch { return 0; }
+    }
+    const mtimeBefore = getIndexMtime();
+    debug("index.html mtime before query", { mtimeBefore, exists: mtimeBefore > 0 });
 
-      // Capture session_id from init message
-      if (message.type === "system" && (message as any).subtype === "init") {
-        currentSessionId = (message as any).session_id;
-        emit({
-          type: "session_started",
-          session_id: currentSessionId,
-        });
+    // Run the agent with retry: if index.html wasn't created/updated, retry once
+    const MAX_ATTEMPTS = 2;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      const currentPrompt = attempt === 1
+        ? prompt
+        : "이전 작업에서 /workspace/data/index.html 파일이 생성 또는 수정되지 않았습니다. 반드시 Write 도구를 사용해서 /workspace/data/index.html 파일을 작성하세요. 말만 하지 말고 실제로 파일을 생성해주세요.";
+      const currentResume = attempt === 1 ? sessionIdToResume : currentSessionId;
+
+      debug(`Query attempt ${attempt}/${MAX_ATTEMPTS}`, { prompt: currentPrompt.substring(0, 100) });
+
+      for await (const message of query({
+        prompt: currentPrompt,
+        options: {
+          allowedTools: [
+            "Read", "Write", "Edit", "Bash", "Grep", "Glob",
+            "WebSearch", "WebFetch", "TodoWrite", "Task",
+          ],
+          maxTurns: 50,
+          permissionMode: "bypassPermissions",
+          allowDangerouslySkipPermissions: true,
+          cwd: workspace,
+          resume: currentResume,
+          settingSources: ["user", "project"],
+        },
+      })) {
+        debug("Query message", { type: message.type, subtype: (message as any).subtype });
+
+        // Capture session_id from init message
+        if (message.type === "system" && (message as any).subtype === "init") {
+          currentSessionId = (message as any).session_id;
+          emit({
+            type: "session_started",
+            session_id: currentSessionId,
+          });
+        }
+
+        // Handle result message
+        if ("result" in message && message.type === "result") {
+          gotResult = true;
+          const resultMsg = message as any;
+          emit({
+            type: "session_complete",
+            session_id: currentSessionId,
+            result: {
+              duration_ms: resultMsg.duration_ms,
+              duration_api_ms: resultMsg.duration_api_ms,
+              total_cost_usd: resultMsg.total_cost_usd,
+              num_turns: resultMsg.num_turns,
+            },
+          });
+        }
       }
 
-      // Handle result message
-      if ("result" in message && message.type === "result") {
-        gotResult = true;
-        const resultMsg = message as any;
+      // Check if index.html was created or modified since before query
+      const mtimeAfter = getIndexMtime();
+      const wasModified = mtimeAfter > mtimeBefore;
+      debug(`Attempt ${attempt} done. mtime: ${mtimeBefore} → ${mtimeAfter}, modified: ${wasModified}, gotResult: ${gotResult}`);
 
-        emit({
-          type: "session_complete",
-          session_id: currentSessionId,
-          result: {
-            duration_ms: resultMsg.duration_ms,
-            duration_api_ms: resultMsg.duration_api_ms,
-            total_cost_usd: resultMsg.total_cost_usd,
-            num_turns: resultMsg.num_turns,
-          },
-        });
+      if (wasModified) {
+        break; // Success — file was created or updated
+      }
 
-        // Flush volume before callback so session JSONL is persisted
-        flushVolume();
-        await callCallback("completed", currentSessionId);
+      if (attempt === MAX_ATTEMPTS) {
+        debug("index.html still not modified after all attempts");
       }
     }
 
-    // If we didn't get a result, still call callback
-    if (!gotResult) {
-      console.error("[AGENT] Warning: query() ended without result");
-      emit({
-        type: "session_complete",
-        session_id: currentSessionId,
-        result: {
-          duration_ms: 0,
-          duration_api_ms: 0,
-          total_cost_usd: 0,
-          num_turns: 0,
-        },
-      });
-      flushVolume();
+    // Final check and callback
+    const mtimeFinal = getIndexMtime();
+    const fileWasModified = mtimeFinal > mtimeBefore;
+    flushVolume();
+
+    if (fileWasModified) {
       await callCallback("completed", currentSessionId);
+    } else if (mtimeFinal > 0) {
+      // File exists but wasn't modified — still report completed (previous round's file is valid)
+      debug("index.html exists but was not modified this round");
+      await callCallback("error", currentSessionId, "에이전트가 index.html을 수정하지 않았습니다");
+    } else {
+      console.error("[AGENT] Warning: index.html does not exist after agent run");
+      await callCallback("error", currentSessionId, "에이전트가 index.html을 생성하지 못했습니다");
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
