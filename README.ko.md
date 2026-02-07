@@ -164,8 +164,9 @@ pnpm dev
 
 
 ## 참고자료
-[Claude Agent SDK Docs](https://platform.claude.com/docs/ko/agent-sdk/overview)
-[Moru Docs](https://moru.io/docs)
+- [Claude Agent SDK Docs](https://platform.claude.com/docs/ko/agent-sdk/overview)
+
+- [Moru Docs](https://moru.io/docs)
 
 ---
 
