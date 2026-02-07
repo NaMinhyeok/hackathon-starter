@@ -17,3 +17,55 @@ model Conversation {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+model Room {
+  id          String       @id @default(cuid())
+  code        String       @unique
+  name        String
+  description String?
+  hostToken   String       @default(cuid())
+  volumeId    String?
+  status      String       @default("lobby") // lobby | active | ended
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  rounds      Round[]
+  suggestions Suggestion[]
+}
+
+model Suggestion {
+  id        String   @id @default(cuid())
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  text      String
+  authorId  String
+  status    String   @default("pending") // pending | selected | built
+  voteCount Int      @default(0)
+  createdAt DateTime @default(now())
+  votes     Vote[]
+  round     Round?
+}
+
+model Vote {
+  id           String     @id @default(cuid())
+  suggestionId String
+  suggestion   Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+  voterId      String
+  createdAt    DateTime   @default(now())
+
+  @@unique([suggestionId, voterId])
+}
+
+model Round {
+  id           String     @id @default(cuid())
+  roomId       String
+  room         Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roundNumber  Int
+  suggestionId String     @unique
+  suggestion   Suggestion @relation(fields: [suggestionId], references: [id])
+  status       String     @default("building") // building | completed | error
+  sandboxId    String?
+  sessionId    String?
+  errorMessage String?
+  createdAt    DateTime   @default(now())
+  completedAt  DateTime?
+}
