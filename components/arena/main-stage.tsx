@@ -5,6 +5,7 @@ import { Eye, Terminal, FolderTree } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PreviewPanel } from "./preview-panel";
 import { BuildLogView } from "./build-log-view";
+import { BuildActivity } from "./build-activity";
 import { ArenaFileExplorer } from "./arena-file-explorer";
 import type { SessionEntry } from "@/lib/types";
 
@@ -70,13 +71,26 @@ export function MainStage({
 
       {/* Tab content — all tabs stay mounted, hidden with CSS */}
       <div className="flex-1 overflow-hidden relative">
-        <div className={cn("absolute inset-0", activeTab !== "preview" && "hidden")}>
-          <PreviewPanel
-            roomId={roomId}
-            refreshKey={previewRefreshKey}
-            onRefresh={onRefreshPreview}
-            hasRounds={!!currentRound}
-          />
+        <div className={cn("absolute inset-0 flex flex-col", activeTab !== "preview" && "hidden")}>
+          {currentRound?.status === "building" && (
+            <div className="h-[200px] shrink-0 border-b border-border">
+              <div className="flex items-center gap-1.5 border-b border-border/50 px-3 py-1.5">
+                <span className="inline-block size-1.5 animate-pulse rounded-full bg-violet-400" />
+                <span className="text-xs font-medium text-muted-foreground">실시간 작업 현황</span>
+              </div>
+              <div className="h-[calc(100%-28px)]">
+                <BuildActivity messages={messages} />
+              </div>
+            </div>
+          )}
+          <div className="flex-1 min-h-0">
+            <PreviewPanel
+              roomId={roomId}
+              refreshKey={previewRefreshKey}
+              onRefresh={onRefreshPreview}
+              hasRounds={!!currentRound}
+            />
+          </div>
         </div>
         <div className={cn("absolute inset-0", activeTab !== "build" && "hidden")}>
           <BuildLogView
