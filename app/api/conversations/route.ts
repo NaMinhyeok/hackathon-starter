@@ -65,9 +65,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Create sandbox and launch agent (fire-and-forget, no streaming connection)
+    const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+    const callbackUrl = `${baseUrl}/api/conversations/${conversation.id}/status`;
     const { sandboxId } = await createAndLaunchAgent(
       volumeId,
-      conversation.id,
+      callbackUrl,
       content,
       sessionId
     );

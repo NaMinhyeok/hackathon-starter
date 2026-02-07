@@ -33,12 +33,10 @@ export async function getVolume(volumeId: string) {
  */
 export async function createAndLaunchAgent(
   volumeId: string,
-  conversationId: string,
+  callbackUrl: string,
   content: string,
   sessionId?: string
 ): Promise<{ sandboxId: string }> {
-  const baseUrl = process.env.BASE_URL || "http://localhost:3000";
-
   const sandbox = await Sandbox.create(TEMPLATE_NAME, {
     volumeId,
     volumeMountPath: "/workspace/data",
@@ -63,7 +61,6 @@ export async function createAndLaunchAgent(
 
   // Launch agent fully detached with nohup — no streaming connection maintained.
   // The agent reads from the input file, runs query(), and calls CALLBACK_URL when done.
-  const callbackUrl = `${baseUrl}/api/conversations/${conversationId}/status`;
   const anthropicApiKey = process.env.ANTHROPIC_API_KEY || "";
   await sandbox.commands.run(
     `nohup bash -c 'cd /workspace/data && WORKSPACE_DIR=/workspace/data CALLBACK_URL="${callbackUrl}" RESUME_SESSION_ID="${sessionId || ""}" ANTHROPIC_API_KEY="${anthropicApiKey}" npx tsx /app/agent.mts < /tmp/agent_input.txt >> /tmp/agent_stdout.log 2>> /tmp/agent_stderr.log' &>/dev/null &`
