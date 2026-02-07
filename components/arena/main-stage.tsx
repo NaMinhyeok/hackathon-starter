@@ -34,9 +34,9 @@ export function MainStage({
   const [activeTab, setActiveTab] = useState<Tab>("preview");
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: "preview", label: "Preview", icon: <Eye className="size-3.5" /> },
-    { id: "build", label: "Build Log", icon: <Terminal className="size-3.5" /> },
-    { id: "files", label: "Files", icon: <FolderTree className="size-3.5" /> },
+    { id: "preview", label: "미리보기", icon: <Eye className="size-3.5" /> },
+    { id: "build", label: "빌드 로그", icon: <Terminal className="size-3.5" /> },
+    { id: "files", label: "파일", icon: <FolderTree className="size-3.5" /> },
   ];
 
   return (
@@ -63,30 +63,30 @@ export function MainStage({
         {currentRound && currentRound.status === "building" && (
           <div className="ml-auto mr-2 flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs text-amber-400">
             <span className="inline-block size-1.5 animate-pulse rounded-full bg-amber-400" />
-            Building: {currentRound.suggestion.text}
+            빌드중: {currentRound.suggestion.text}
           </div>
         )}
       </div>
 
-      {/* Tab content */}
-      <div className="flex-1 overflow-hidden">
-        {activeTab === "preview" && (
+      {/* Tab content — all tabs stay mounted, hidden with CSS */}
+      <div className="flex-1 overflow-hidden relative">
+        <div className={cn("absolute inset-0", activeTab !== "preview" && "hidden")}>
           <PreviewPanel
             roomId={roomId}
             refreshKey={previewRefreshKey}
             onRefresh={onRefreshPreview}
             hasRounds={!!currentRound}
           />
-        )}
-        {activeTab === "build" && (
+        </div>
+        <div className={cn("absolute inset-0", activeTab !== "build" && "hidden")}>
           <BuildLogView
             messages={messages}
             currentRound={currentRound}
           />
-        )}
-        {activeTab === "files" && (
+        </div>
+        <div className={cn("absolute inset-0", activeTab !== "files" && "hidden")}>
           <ArenaFileExplorer roomId={roomId} />
-        )}
+        </div>
       </div>
     </div>
   );

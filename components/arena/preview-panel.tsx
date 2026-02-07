@@ -27,7 +27,7 @@ export function PreviewPanel({ roomId, refreshKey, onRefresh, hasRounds }: Previ
           setError(false);
         } else {
           setHtml(null);
-          setError(false); // 404 is expected when no index.html yet
+          setError(false);
         }
       } catch {
         setError(true);
@@ -44,9 +44,9 @@ export function PreviewPanel({ roomId, refreshKey, onRefresh, hasRounds }: Previ
         <div className="text-4xl mb-3">
           <span role="img" aria-label="rocket">&#x1F680;</span>
         </div>
-        <p className="text-sm font-medium">Waiting for first round</p>
+        <p className="text-sm font-medium">첫 라운드를 기다리는 중</p>
         <p className="text-xs text-muted-foreground mt-1">
-          Submit ideas and vote, then the host will start building!
+          아이디어를 제출하고 투표하세요. 호스트가 빌드를 시작합니다!
         </p>
       </div>
     );
@@ -63,9 +63,9 @@ export function PreviewPanel({ roomId, refreshKey, onRefresh, hasRounds }: Previ
   if (!html) {
     return (
       <div className="flex h-full flex-col items-center justify-center text-center px-4">
-        <p className="text-sm text-muted-foreground">No preview yet</p>
+        <p className="text-sm text-muted-foreground">아직 미리보기가 없어요</p>
         <p className="text-xs text-muted-foreground/60 mt-1">
-          The AI agent is working on it...
+          AI 에이전트가 작업 중입니다...
         </p>
         <Button
           variant="ghost"
@@ -74,7 +74,7 @@ export function PreviewPanel({ roomId, refreshKey, onRefresh, hasRounds }: Previ
           className="mt-3"
         >
           <RefreshCw className="size-3.5" />
-          Refresh
+          새로고침
         </Button>
       </div>
     );
@@ -83,14 +83,14 @@ export function PreviewPanel({ roomId, refreshKey, onRefresh, hasRounds }: Previ
   return (
     <div className="relative h-full">
       <div className="absolute right-2 top-2 z-10 flex gap-1">
-        <Button variant="outline" size="iconXs" onClick={onRefresh} title="Refresh preview">
+        <Button variant="outline" size="iconXs" onClick={onRefresh} title="새로고침">
           <RefreshCw className={`size-3 ${loading ? "animate-spin" : ""}`} />
         </Button>
         <Button
           variant="outline"
           size="iconXs"
           onClick={() => window.open(`/api/rooms/${roomId}/preview`, "_blank")}
-          title="Open in new tab"
+          title="새 탭에서 열기"
         >
           <ExternalLink className="size-3" />
         </Button>
@@ -99,7 +99,7 @@ export function PreviewPanel({ roomId, refreshKey, onRefresh, hasRounds }: Previ
         srcDoc={html}
         sandbox="allow-scripts"
         className="h-full w-full border-0 bg-white"
-        title="Preview"
+        title="미리보기"
       />
     </div>
   );

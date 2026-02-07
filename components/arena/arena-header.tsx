@@ -31,9 +31,9 @@ export function ArenaHeader({ room, currentRound, totalRounds, roomId }: ArenaHe
   };
 
   const statusLabel = () => {
-    if (!currentRound) return "Lobby";
-    if (currentRound.status === "building") return `Building Round ${currentRound.roundNumber}...`;
-    return `Round ${totalRounds} Complete`;
+    if (!currentRound) return "대기중";
+    if (currentRound.status === "building") return `라운드 ${currentRound.roundNumber} 빌드중...`;
+    return `라운드 ${totalRounds} 완료`;
   };
 
   const statusColor = () => {
@@ -62,7 +62,7 @@ export function ArenaHeader({ room, currentRound, totalRounds, roomId }: ArenaHe
             variant="ghost"
             size="iconSm"
             onClick={() => setShowQR(true)}
-            title="Show QR Code"
+            title="QR 코드 보기"
           >
             <QrCode className="size-4" />
           </Button>
@@ -71,7 +71,7 @@ export function ArenaHeader({ room, currentRound, totalRounds, roomId }: ArenaHe
         <div className="flex items-center gap-3">
           {totalRounds > 0 && (
             <span className="text-xs text-muted-foreground">
-              Round {currentRound?.roundNumber || totalRounds}/{totalRounds}
+              라운드 {currentRound?.roundNumber || totalRounds}/{totalRounds}
             </span>
           )}
           <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColor()}`}>

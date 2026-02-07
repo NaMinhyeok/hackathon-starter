@@ -55,6 +55,7 @@ ${description ? `Project description: ${description}` : ""}
 Feature to build: "${suggestionText}"
 
 IMPORTANT:
+- ALWAYS respond and write all output messages in Korean (한국어)
 - Check existing files in /workspace/data/ first and build on top of them
 - Always produce a working index.html at the root that showcases ALL features built so far
 - Use inline CSS/JS or CDN links (Tailwind CDN, etc.) for self-contained HTML

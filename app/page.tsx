@@ -26,14 +26,13 @@ export default function Home() {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to create room");
+        throw new Error(data.error || "방 생성에 실패했습니다");
       }
       const data = await res.json();
-      // Store host token
       localStorage.setItem(`host-token-${data.room.id}`, data.hostToken);
       router.push(`/room/${data.room.id}`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Unknown error");
+      setError(e instanceof Error ? e.message : "알 수 없는 오류");
     } finally {
       setLoading(false);
     }
@@ -51,12 +50,12 @@ export default function Home() {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Room not found");
+        throw new Error(data.error || "방을 찾을 수 없습니다");
       }
       const data = await res.json();
       router.push(`/room/${data.room.id}`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Unknown error");
+      setError(e instanceof Error ? e.message : "알 수 없는 오류");
     } finally {
       setLoading(false);
     }
@@ -72,7 +71,7 @@ export default function Home() {
           </span>
         </h1>
         <p className="text-lg text-muted-foreground">
-          Submit ideas, vote, and watch AI build features live
+          아이디어를 제출하고, 투표하고, AI가 실시간으로 만드는 걸 지켜보세요
         </p>
       </div>
 
@@ -85,10 +84,10 @@ export default function Home() {
           >
             <div className="mb-3 flex items-center gap-2">
               <Sparkles className="size-5 text-violet-400" />
-              <span className="font-semibold">Create Arena</span>
+              <span className="font-semibold">아레나 만들기</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Start a new coding arena and invite your audience
+              새 코딩 아레나를 만들고 관객을 초대하세요
             </p>
             <ArrowRight className="mt-4 size-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
           </button>
@@ -99,10 +98,10 @@ export default function Home() {
           >
             <div className="mb-3 flex items-center gap-2">
               <Users className="size-5 text-pink-400" />
-              <span className="font-semibold">Join Arena</span>
+              <span className="font-semibold">아레나 참여</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Enter a room code to join and submit your ideas
+              코드를 입력해서 아레나에 참여하세요
             </p>
             <ArrowRight className="mt-4 size-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
           </button>
@@ -111,12 +110,12 @@ export default function Home() {
         <div className="w-full max-w-md rounded-xl border border-border bg-card p-6">
           <div className="mb-4 flex items-center gap-2">
             <Sparkles className="size-5 text-violet-400" />
-            <span className="font-semibold">Create Arena</span>
+            <span className="font-semibold">아레나 만들기</span>
           </div>
           <div className="space-y-3">
             <input
               type="text"
-              placeholder="Project name"
+              placeholder="프로젝트 이름"
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
@@ -125,7 +124,7 @@ export default function Home() {
             />
             <input
               type="text"
-              placeholder="Description (optional)"
+              placeholder="설명 (선택사항)"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
@@ -140,14 +139,14 @@ export default function Home() {
                 onClick={() => { setMode("idle"); setError(null); }}
                 disabled={loading}
               >
-                Back
+                뒤로
               </Button>
               <Button
                 onClick={handleCreate}
                 disabled={!name.trim() || loading}
                 className="flex-1 bg-violet-600 hover:bg-violet-700"
               >
-                {loading ? <Loader2 className="size-4 animate-spin" /> : "Create Arena"}
+                {loading ? <Loader2 className="size-4 animate-spin" /> : "아레나 만들기"}
               </Button>
             </div>
           </div>
@@ -156,12 +155,12 @@ export default function Home() {
         <div className="w-full max-w-md rounded-xl border border-border bg-card p-6">
           <div className="mb-4 flex items-center gap-2">
             <Users className="size-5 text-pink-400" />
-            <span className="font-semibold">Join Arena</span>
+            <span className="font-semibold">아레나 참여</span>
           </div>
           <div className="space-y-3">
             <input
               type="text"
-              placeholder="Enter room code (e.g. ABC123)"
+              placeholder="참여 코드 입력 (예: ABC123)"
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               onKeyDown={(e) => e.key === "Enter" && handleJoin()}
@@ -178,14 +177,14 @@ export default function Home() {
                 onClick={() => { setMode("idle"); setError(null); }}
                 disabled={loading}
               >
-                Back
+                뒤로
               </Button>
               <Button
                 onClick={handleJoin}
                 disabled={code.length < 6 || loading}
                 className="flex-1 bg-pink-600 hover:bg-pink-700"
               >
-                {loading ? <Loader2 className="size-4 animate-spin" /> : "Join Arena"}
+                {loading ? <Loader2 className="size-4 animate-spin" /> : "참여하기"}
               </Button>
             </div>
           </div>

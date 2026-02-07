@@ -7,6 +7,22 @@
 - **Storage**: PostgreSQL (conversation state), Moru Volumes (workspace files)
 - **Template alias**: `moru-hackathon-agent` (defined in `agent/template.ts` and `lib/moru.ts`)
 
+## Arena Feature (Vibe Coding Arena)
+
+관객이 아이디어를 제출/투표하고, AI 에이전트가 라이브 코딩하는 플랫폼.
+
+- **Room API**: `/api/rooms/` — 방 생성/참여, 아이디어/투표, 라운드 관리
+- **Arena UI**: `/room/[roomId]` — 대시보드 (suggestions, preview, build log, files)
+- **Polling**: `GET /api/rooms/[roomId]/state` — 2초 폴링으로 통합 상태 조회
+- **Preview**: 에이전트가 `/workspace/data/index.html`에 self-contained HTML 생성 → iframe으로 표시
+- **callbackUrl**: `lib/moru.ts`의 `createAndLaunchAgent`는 callbackUrl을 파라미터로 받음 (하드코딩 아님)
+- **Agent skill**: `agent/.claude/skills/arena-builder/SKILL.md` — 에이전트용 아레나 빌드 지침
+
+## Dev Environment Quirks
+
+- **pnpm version mismatch**: 프로젝트는 v10.18.3 요구하지만 로컬에 v9.x일 수 있음. `COREPACK_ENABLE_STRICT=0 pnpm <cmd>` 사용
+- **pnpm workspace root**: 패키지 추가 시 `-w` 플래그 필요 (`pnpm add -w <pkg>`)
+
 ## Moru CLI - Setup
 
 Install the CLI and authenticate:
@@ -208,10 +224,12 @@ pnpm db:studio
 
 ### Schema
 
-The app has a single `Conversation` model:
-```
-id, status (idle/running/completed/error), volumeId, sandboxId, sessionId, errorMessage
-```
+Models: `Conversation`, `Room`, `Suggestion`, `Vote`, `Round`
+- `Conversation`: 기존 채팅용 (id, status, volumeId, sandboxId, sessionId)
+- `Room`: 아레나 방 (code, name, hostToken, volumeId, status: lobby/active/ended)
+- `Suggestion`: 아이디어 (text, authorId, voteCount, status: pending/selected/built)
+- `Vote`: 투표 (@@unique[suggestionId, voterId] — 1인 1표)
+- `Round`: 라운드 (roundNumber, suggestionId, status: building/completed/error, sandboxId)
 
 ### Common DB Issues
 
@@ -275,6 +293,7 @@ curl -H "X-API-Key: $MORU_API_KEY" \
 - `readVolumeFile` in `lib/moru.ts` uses direct API call (bypasses SDK bug with 401)
 - Volume files are only visible if written to `/workspace/data/`, not `/home/user/`
 - The `.claude/` directory is symlinked: `~/.claude -> /workspace/data/.claude`
+- **Volume name regex**: `^[a-z][a-z0-9-]*[a-z0-9]$` — 소문자+숫자+하이픈만 허용. 대문자 넣으면 400 에러
 
 ---
 

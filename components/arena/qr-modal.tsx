@@ -34,14 +34,14 @@ export function QRModal({ roomCode, roomId, onClose }: QRModalProps) {
         </button>
 
         <div className="flex flex-col items-center gap-4">
-          <h3 className="text-lg font-semibold">Join Arena</h3>
+          <h3 className="text-lg font-semibold">아레나 참여</h3>
 
           <div className="rounded-xl bg-white p-4">
             <QRCodeSVG value={url} size={200} level="M" />
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Code:</span>
+            <span className="text-sm text-muted-foreground">코드:</span>
             <span className="font-mono text-2xl font-bold tracking-widest">
               {roomCode}
             </span>
@@ -55,18 +55,18 @@ export function QRModal({ roomCode, roomId, onClose }: QRModalProps) {
             {copied ? (
               <>
                 <Check className="size-4 text-emerald-400" />
-                Copied!
+                복사됨!
               </>
             ) : (
               <>
                 <Copy className="size-4" />
-                Copy Link
+                링크 복사
               </>
             )}
           </Button>
 
           <p className="text-xs text-muted-foreground text-center">
-            Scan the QR code or share the link to join
+            QR 코드를 스캔하거나 링크를 공유해서 참여하세요
           </p>
         </div>
       </div>

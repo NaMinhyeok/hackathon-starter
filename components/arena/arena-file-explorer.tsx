@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { FileExplorer } from "@/components/workspace/file-explorer";
 import { FileViewer } from "@/components/workspace/file-viewer";
 import type { FileInfo } from "@/lib/types";
@@ -16,13 +16,20 @@ export function ArenaFileExplorer({ roomId }: ArenaFileExplorerProps) {
   const [loadingContent, setLoadingContent] = useState(false);
   const [contentError, setContentError] = useState<string | null>(null);
   const [loadingFiles, setLoadingFiles] = useState(true);
+  const prevFilesJson = useRef<string>("");
 
   const fetchFiles = useCallback(async () => {
     try {
       const res = await fetch(`/api/rooms/${roomId}/files?tree=true`);
       if (res.ok) {
         const data = await res.json();
-        setFiles(data.files || []);
+        const newFiles = data.files || [];
+        // Only update state if files actually changed to avoid resetting FileExplorer's folder state
+        const json = JSON.stringify(newFiles);
+        if (json !== prevFilesJson.current) {
+          prevFilesJson.current = json;
+          setFiles(newFiles);
+        }
       }
     } catch {
       // Silently fail
@@ -37,7 +44,7 @@ export function ArenaFileExplorer({ roomId }: ArenaFileExplorerProps) {
     return () => clearInterval(interval);
   }, [fetchFiles]);
 
-  const handleFileSelect = async (file: FileInfo) => {
+  const handleFileSelect = useCallback(async (file: FileInfo) => {
     if (file.type === "directory") return;
     setSelectedFilePath(file.path);
     setLoadingContent(true);
@@ -48,14 +55,14 @@ export function ArenaFileExplorer({ roomId }: ArenaFileExplorerProps) {
         const data = await res.json();
         setFileContent(data.content);
       } else {
-        setContentError("Failed to load file");
+        setContentError("파일을 불러올 수 없습니다");
       }
     } catch {
-      setContentError("Error loading file");
+      setContentError("파일 로딩 중 오류 발생");
     } finally {
       setLoadingContent(false);
     }
-  };
+  }, [roomId]);
 
   return (
     <div className="flex h-full">

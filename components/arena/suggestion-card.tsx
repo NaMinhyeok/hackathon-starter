@@ -35,12 +35,12 @@ export function SuggestionCard({ suggestion, voterId, onVote }: SuggestionCardPr
         <div className="mt-1 flex items-center gap-2">
           {isBuilt && (
             <span className="flex items-center gap-1 text-xs text-emerald-400">
-              <Check className="size-3" /> Built
+              <Check className="size-3" /> 완료
             </span>
           )}
           {isBuilding && (
             <span className="flex items-center gap-1 text-xs text-amber-400">
-              <Hammer className="size-3 animate-pulse" /> Building
+              <Hammer className="size-3 animate-pulse" /> 빌드중
             </span>
           )}
         </div>

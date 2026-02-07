@@ -145,7 +145,7 @@ export function RoomArena({ roomId }: RoomArenaProps) {
   if (!state) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
-        <div className="text-muted-foreground animate-pulse">Loading arena...</div>
+        <div className="text-muted-foreground animate-pulse">아레나 로딩중...</div>
       </div>
     );
   }
