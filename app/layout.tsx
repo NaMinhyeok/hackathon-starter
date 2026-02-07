@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hackathon Starter",
-  description: "Claude Agent SDK + Moru Sandbox Demo",
+  title: "Vibe Coding Arena",
+  description: "Submit ideas, vote, and watch AI build features live",
 };
 
 export default function RootLayout({
