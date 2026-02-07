@@ -170,41 +170,9 @@ async function main() {
     resumeSessionId,
     HOME: process.env.HOME,
     CALLBACK_URL: process.env.CALLBACK_URL,
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY ? "set" : "not set",
     cwd: process.cwd(),
   });
-
-  // Debug: Check credentials
-  const credentialsPath = path.join(process.env.HOME || "/home/user", ".claude", ".credentials.json");
-  const credentialsExists = fs.existsSync(credentialsPath);
-  debug("Credentials check", {
-    path: credentialsPath,
-    exists: credentialsExists,
-  });
-
-  if (credentialsExists) {
-    try {
-      const creds = JSON.parse(fs.readFileSync(credentialsPath, "utf-8"));
-      const expiresAt = creds?.claudeAiOauth?.expiresAt;
-      if (expiresAt) {
-        const expires = new Date(expiresAt);
-        debug("Credentials expiry", {
-          expiresAt: expires.toISOString(),
-          isExpired: Date.now() > expiresAt,
-        });
-      }
-    } catch (e) {
-      debug("Failed to parse credentials", { error: String(e) });
-    }
-  }
-
-  // Debug: List ~/.claude directory
-  const claudeDir = path.join(process.env.HOME || "/home/user", ".claude");
-  try {
-    const claudeFiles = fs.readdirSync(claudeDir);
-    debug("~/.claude directory contents", claudeFiles);
-  } catch (e) {
-    debug("Failed to list ~/.claude", { error: String(e) });
-  }
 
   const rl = readline.createInterface({
     input: process.stdin,
